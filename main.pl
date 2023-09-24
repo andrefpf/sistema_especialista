@@ -15,6 +15,7 @@ subclasse(prot_paladin).
 subclasse(holy_paladin).
 subclasse(ret_paladin).
 
+% Características de cada classe
 role(prot_warrior, tank).
 role(arms_warrior, dps).
 role(fury_warrior, dps).
@@ -26,7 +27,7 @@ role(fire_mage, dps).
 role(frost_mage, dps).
 role(guardian_druid, tank).
 role(resto_druid, healer).
-# role(feral_druid).
+% role(feral_druid, tank?).
 role(balance_druid, dps).
 role(prot_paladin, tank).
 role(holy_paladin, healer).
@@ -72,4 +73,3 @@ utility(balance_druid, buff).
 utility(prot_paladin, buff).
 utility(holy_paladin, buff).
 utility(ret_paladin, buff).
-
