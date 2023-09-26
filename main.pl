@@ -15,61 +15,58 @@ subclasse(prot_paladin).
 subclasse(holy_paladin).
 subclasse(ret_paladin).
 
-% Características de cada classe
-role(prot_warrior, tank).
-role(arms_warrior, dps).
-role(fury_warrior, dps).
-role(survival_hunter, dps).
-role(bm_hunter, dps).
-role(mm_hunter, dps).
-role(arcane_mage, dps).
-role(fire_mage, dps).
-role(frost_mage, dps).
-role(guardian_druid, tank).
-role(resto_druid, healer).
-% role(feral_druid, tank?).
-role(balance_druid, dps).
-role(prot_paladin, tank).
-role(holy_paladin, healer).
-role(ret_paladin, dps).
+role(tank).
+role(healer).
+role(dps).
 
-atack_range(prot_warrior, melee_tank).
-atack_range(arms_warrior, melee).
-atack_range(fury_warrior, melee).
-atack_range(survival_hunter, melee).
-atack_range(bm_hunter, ranged).
-atack_range(mm_hunter, ranged).
-atack_range(arcane_mage, ranged).
-atack_range(fire_mage, ranged).
-atack_range(frost_mage, ranged).
-atack_range(guardian_druid, melee_tank).
-atack_range(resto_druid, healer).
-atack_range(feral_druid, melee).
-atack_range(balance_druid, ranged).
-atack_range(prot_paladin, melee_tank).
-atack_range(holy_paladin, healer).
-atack_range(ret_paladin, healer).
+atack_range(melee_tank).
+atack_range(melee).
+atack_range(ranged).
 
-utility(prot_warrior, buff).
-utility(arms_warrior, buff).
-utility(fury_warrior, buff).
-utility(survival_hunter, bloodlust).
-utility(bm_hunter, bloodlust).
-utility(mm_hunter, bloodlust).
-utility(arcane_mage, buff).
-utility(fire_mage, buff).
-utility(frost_mage, buff).
-utility(arcane_mage, bloodlust).
-utility(fire_mage, bloodlust).
-utility(frost_mage, bloodlust).
-utility(guardian_druid, battle_res).
-utility(resto_druid, battle_res).
-utility(feral_druid, battle_res).
-utility(balance_druid, battle_res).
-utility(prot_paladin, battle_res).
-utility(holy_paladin, battle_res).
-utility(ret_paladin, battle_res).
-utility(balance_druid, buff).
-utility(prot_paladin, buff).
-utility(holy_paladin, buff).
-utility(ret_paladin, buff).
+utility(buff).
+utility(bloodlust).
+utility(battle_res).
+
+subclass_atributes(prot_warrior,    Role, AtackRange, Utility) :- (Role=tank),   (AtackRange=melee_tank),   (Utility=buff).
+subclass_atributes(arms_warrior,    Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=melee),        (Utility=buff).
+subclass_atributes(fury_warrior,    Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=melee),        (Utility=buff).
+subclass_atributes(survival_hunter, Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=melee),        (Utility=bloodlust).
+subclass_atributes(bm_hunter,       Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=ranged),       (Utility=bloodlust).
+subclass_atributes(mm_hunter,       Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=ranged),       (Utility=bloodlust).
+subclass_atributes(arcane_mage,     Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=ranged),       (Utility=bloodlust; Utility=buff).
+subclass_atributes(fire_mage,       Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=ranged),       (Utility=bloodlust; Utility=buff).
+subclass_atributes(frost_mage,      Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=ranged),       (Utility=bloodlust; Utility=buff).
+subclass_atributes(guardian_druid,  Role, AtackRange, Utility) :- (Role=tank),   (AtackRange=melee_tank),   (Utility=battle_res).
+subclass_atributes(resto_druid,     Role, AtackRange, Utility) :- (Role=healer), (AtackRange=ranged),       (Utility=battle_res).
+subclass_atributes(feral_druid,     Role, AtackRange, Utility) :-                (AtackRange=melee),        (Utility=battle_res).
+subclass_atributes(balance_druid,   Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=ranged),       (Utility=battle_res; Utility=buff).
+subclass_atributes(prot_paladin,    Role, AtackRange, Utility) :- (Role=tank),   (AtackRange=melee_tank),   (Utility=battle_res; Utility=buff).
+subclass_atributes(holy_paladin,    Role, AtackRange, Utility) :- (Role=healer), (AtackRange=melee),        (Utility=battle_res; Utility=buff).
+subclass_atributes(ret_paladin,     Role, AtackRange, Utility) :- (Role=dps),    (AtackRange=melee),        (Utility=battle_res; Utility=buff).
+
+complementar_role(Role, Subclass) :- 
+    subclass_atributes(Subclass, R, _, _),
+    role(Role),
+    Role \= R.
+
+complementar_atack_range(AtackRange, Subclass) :- 
+    subclass_atributes(Subclass, _, AR, _),
+    atack_range(Role),
+    Role \= AR.
+
+complementar_utility(Utility, Subclass) :- 
+    subclass_atributes(Subclass, _, _, U),
+    atack_range(Role),
+    Role \= U.
+
+% equivalente a sugestao_vinho
+% subclasse_complementar(Sugestao, prot_warrior) :- subclasse_adequada(Sugestao, healer, ranged).
+subclasse_complementar(Sugestao, Subclass) :- 
+    subclass_atributes(Sugestao, R, AR, U),
+    complementar_role(R, Subclass),
+    complementar_atack_range(AR, Subclass),
+    complementar_utility(U, Subclass).
+
+% % equivalente a melhor_vinho
+% subclasse_adequada(resto_druid, Role, AtackRange) :- (Role=healer), (AtackRange=ranged).
+% subclasse_adequada(feral_druid, Role, AtackRange) :- (Role=healer), (AtackRange=ranged), !.
